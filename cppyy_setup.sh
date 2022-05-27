@@ -145,6 +145,7 @@ if [ $# -eq 0 ]; then
     INSTALL_DIR=${pwd}
 elif [[ "$1" -eq "--update" ]]; then
     update_script "$( dirname -- "$0"; )"
+    exit
 else
     INSTALL_DIR=$1
 fi
