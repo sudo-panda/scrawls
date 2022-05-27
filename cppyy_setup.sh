@@ -16,7 +16,7 @@ setup_cppyy_backend() {
 
     cd cppyy-backend
     git stash
-    git chechout rm-root-meta
+    git checkout rm-root-meta
 
     cd cling
     python3 setup.py egg_info
