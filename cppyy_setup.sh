@@ -1,3 +1,4 @@
+#!/bin/bash
 setup_venv() {
     if [! -d "$1/.venv" ]; then
         cd $1
@@ -116,7 +117,7 @@ pythonpath_add() {
 
 update_script() {
     cd $1
-
+    wget https://raw.githubusercontent.com/sudo-panda/scrawls/main/cppyy_setup.sh
 }
 
 if [ $# -eq 0 ]; then
