@@ -1,12 +1,14 @@
 #!/bin/bash
 setup_venv() {
     if [! -d "$1/.venv" ]; then
+        echo "Creating .venv in $1 directory"
         cd $1
         python3 -m venv .venv
     fi
 }
 
 setup_cppyy_backend() {
+    echo "Setting up cppyy-backend in $1 directory"
     cd $1
     if [! -d "$1/cppyy-backend" ]; then
         git clone https://github.com/sudo-panda/cppyy-backend.git
@@ -30,6 +32,7 @@ setup_cppyy_backend() {
     mkdir build
     cd build
 
+    echo " Running cmake in ${pwd} directory"
     cmake  \
         -DCMAKE_BUILD_TYPE="Debug" \
         -DLLVM_BUILD_TYPE="Debug"  \
@@ -40,9 +43,13 @@ setup_cppyy_backend() {
         -Druntime_cxxmodules="OFF" \
         ../src
 
+    echo " Running make in ${pwd} directory"
     make -j6
+
+    echo " Copying shared library file"
     cp lib/libClingWrappers.so ../python/cppyy_backend/lib/libcppyy_backend.so
 
+    echo " Copying headers ..."
     mkdir etc/llvm
     mkdir etc/llvm/ADT
     mkdir etc/llvm/Config
@@ -73,12 +80,15 @@ setup_cppyy_backend() {
         etc/llvm/Support
     cp ../src/interpreter/llvm/src/include/llvm-c/DataTypes.h \
         etc/llvm-c
+    echo " Done! cppyy-backend installed"
 }
 
 setup_cpycppyy() {
+    echo "Setting up CPyCppyy in $1 directory"
     cd $1
 
     if [! -d "$1/CPyCppyy" ]; then
+        echo " Cloning CPyCppyy"
         git clone https://github.com/sudo-panda/CPyCppyy.git
     fi
 
@@ -87,16 +97,24 @@ setup_cpycppyy() {
     git checkout wip
     git pull --rebase
 
-    mkdir build && cd build
+    mkdir build
+    cd build
 
+    echo " Running cmake in ${pwd} directory"
     cmake -DCMAKE_BUILD_TYPE="Debug" ..
+
+    echo " Running make in ${pwd} directory"
     make -j6
+
+    echo " Done! CPyCppyy installed"
 }
 
 setup_cppyy() {
+    echo "Setting up cppyy in $1 directory"
     cd $1
 
     if [! -d "$1/cppyy" ]; then
+        echo " Cloning cppyy"
         git clone https://github.com/sudo-panda/cppyy.git
     fi
 
@@ -107,6 +125,8 @@ setup_cppyy() {
 
     cd cppyy
     python3 -m pip install . --upgrade --no-deps
+
+    echo " Done! cppyy installed"
 }
 
 pythonpath_add() {
@@ -116,6 +136,7 @@ pythonpath_add() {
 }
 
 update_script() {
+    echo "Updating cppyy_setup.sh in $1 directory"
     cd $1
     wget https://raw.githubusercontent.com/sudo-panda/scrawls/main/cppyy_setup.sh
 }
