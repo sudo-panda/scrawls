@@ -1,6 +1,6 @@
 #!/bin/bash
 setup_venv() {
-    if [! -d "$1/.venv" ]; then
+    if [ ! -d "$1/.venv" ]; then
         echo "Creating .venv in $1 directory"
         cd $1
         python3 -m venv .venv
@@ -10,7 +10,7 @@ setup_venv() {
 setup_cppyy_backend() {
     echo "Setting up cppyy-backend in $1 directory"
     cd $1
-    if [! -d "$1/cppyy-backend" ]; then
+    if [ ! -d "$1/cppyy-backend" ]; then
         git clone https://github.com/sudo-panda/cppyy-backend.git
     fi
 
@@ -21,11 +21,11 @@ setup_cppyy_backend() {
     cd cling
     python3 setup.py egg_info
 
-    if [! -d "$1/cppyy-backend/cling/src" ]; then
+    if [ ! -d "$1/cppyy-backend/cling/src" ]; then
         python3 create_src_directory.py
     fi
 
-    if [! -L "$1/cppyy-backend/cling/src/core/metacling/src/clingwrapper" ]; then
+    if [ ! -L "$1/cppyy-backend/cling/src/core/metacling/src/clingwrapper" ]; then
         ln -s $1/cppyy-backend/clingwrapper/src $1/cppyy-backend/cling/src/core/metacling/src/clingwrapper
     fi
 
@@ -87,7 +87,7 @@ setup_cpycppyy() {
     echo "Setting up CPyCppyy in $1 directory"
     cd $1
 
-    if [! -d "$1/CPyCppyy" ]; then
+    if [ ! -d "$1/CPyCppyy" ]; then
         echo " Cloning CPyCppyy"
         git clone https://github.com/sudo-panda/CPyCppyy.git
     fi
@@ -113,7 +113,7 @@ setup_cppyy() {
     echo "Setting up cppyy in $1 directory"
     cd $1
 
-    if [! -d "$1/cppyy" ]; then
+    if [ ! -d "$1/cppyy" ]; then
         echo " Cloning cppyy"
         git clone https://github.com/sudo-panda/cppyy.git
     fi
@@ -143,10 +143,12 @@ update_script() {
 
 if [ $# -eq 0 ]; then
     INSTALL_DIR=${pwd}
-elif [[ "$1" -eq "--update" ]]; then
+elif [[ $1 == "--update" ]]; then
+    echo "Updating ..."
     update_script "$( dirname -- "$0"; )"
     exit
 else
+    echo "$1"
     INSTALL_DIR=$1
 fi
 
