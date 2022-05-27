@@ -46,19 +46,20 @@ setup_cppyy_backend() {
     make -j6
 
     echo "-----   Copying shared library file   -----"
+    mkdir -p ../python/cppyy_backend/lib
     cp lib/libClingWrappers.so ../python/cppyy_backend/lib/libcppyy_backend.so
 
     echo "-----   Copying headers ...   -----"
-    mkdir etc/llvm
-    mkdir etc/llvm/ADT
-    mkdir etc/llvm/Config
-    mkdir etc/llvm/Support
-    mkdir etc/llvm-c
+    mkdir -p etc/llvm
+    mkdir -p etc/llvm/ADT
+    mkdir -p etc/llvm/Config
+    mkdir -p etc/llvm/Support
+    mkdir -p etc/llvm-c
 
     touch etc/llvm/Config/abi-breaking.h
     touch etc/llvm/Config/llvm-config.h
-
-    cp ../src/interpreter/cling/include/cling/Interpreter/Interpreter.h \
+    cp  ../src/interpreter/cling/include/cling/Interpreter/InvocationOptions.h \
+        ../src/interpreter/cling/include/cling/Interpreter/Interpreter.h       \
         etc/cling/Interpreter/
     cp  ../src/interpreter/llvm/src/include/llvm/ADT/iterator.h       \
         ../src/interpreter/llvm/src/include/llvm/ADT/iterator_range.h \
@@ -79,6 +80,7 @@ setup_cppyy_backend() {
         etc/llvm/Support
     cp ../src/interpreter/llvm/src/include/llvm-c/DataTypes.h \
         etc/llvm-c
+
     echo "=====   Done! cppyy-backend installed   ====="
     echo ""
 }
@@ -126,7 +128,7 @@ setup_cppyy() {
     git checkout rm-root-meta
     git pull --rebase
 
-    cd cppyy
+    python3 -m pip install wheel
     python3 -m pip install . --upgrade --no-deps
 
     echo "=====   Done! cppyy installed   ====="
