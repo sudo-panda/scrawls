@@ -1,17 +1,17 @@
 #!/bin/bash
 setup_venv() {
     if [ ! -d "$1/.venv" ]; then
-        echo "Creating .venv in $1 directory"
+        echo "=====   Creating .venv in $1 directory   ====="
         cd $1
         python3 -m venv .venv
     fi
 }
 
 setup_cppyy_backend() {
-    echo "Setting up cppyy-backend in $1 directory"
+    echo "=====   Setting up cppyy-backend in $1 directory   ====="
     cd $1
     if [ ! -d "$1/cppyy-backend" ]; then
-        echo " Cloning cppyy-backend"
+        echo "-----   Cloning cppyy-backend   -----"
         git clone https://github.com/sudo-panda/cppyy-backend.git
         git config --global --add safe.directory $1/cppyy-backend
     fi
@@ -31,7 +31,7 @@ setup_cppyy_backend() {
     mkdir build
     cd build
 
-    echo " Running cmake in ${pwd} directory"
+    echo "-----   Running cmake in ${pwd} directory   -----"
     cmake  \
         -DCMAKE_BUILD_TYPE="Debug" \
         -DLLVM_BUILD_TYPE="Debug"  \
@@ -42,13 +42,13 @@ setup_cppyy_backend() {
         -Druntime_cxxmodules="OFF" \
         ../src
 
-    echo " Running make in ${pwd} directory"
+    echo "-----   Running make in ${pwd} directory   -----"
     make -j6
 
-    echo " Copying shared library file"
+    echo "-----   Copying shared library file   -----"
     cp lib/libClingWrappers.so ../python/cppyy_backend/lib/libcppyy_backend.so
 
-    echo " Copying headers ..."
+    echo "-----   Copying headers ...   -----"
     mkdir etc/llvm
     mkdir etc/llvm/ADT
     mkdir etc/llvm/Config
@@ -79,15 +79,16 @@ setup_cppyy_backend() {
         etc/llvm/Support
     cp ../src/interpreter/llvm/src/include/llvm-c/DataTypes.h \
         etc/llvm-c
-    echo " Done! cppyy-backend installed"
+    echo "=====   Done! cppyy-backend installed   ====="
+    echo ""
 }
 
 setup_cpycppyy() {
-    echo "Setting up CPyCppyy in $1 directory"
+    echo "=====   Setting up CPyCppyy in $1 directory   ====="
     cd $1
 
     if [ ! -d "$1/CPyCppyy" ]; then
-        echo " Cloning CPyCppyy"
+        echo "-----   Cloning CPyCppyy   -----"
         git clone https://github.com/sudo-panda/CPyCppyy.git
         git config --global --add safe.directory $1/CPyCppyy
     fi
@@ -100,21 +101,22 @@ setup_cpycppyy() {
     mkdir build
     cd build
 
-    echo " Running cmake in ${pwd} directory"
+    echo "-----   Running cmake in ${pwd} directory   -----"
     cmake -DCMAKE_BUILD_TYPE="Debug" ..
 
     echo " Running make in ${pwd} directory"
     make -j6
 
-    echo " Done! CPyCppyy installed"
+    echo "=====   Done! CPyCppyy installed   ====="
+    echo ""
 }
 
 setup_cppyy() {
-    echo "Setting up cppyy in $1 directory"
+    echo "=====   Setting up cppyy in $1 directory   ====="
     cd $1
 
     if [ ! -d "$1/cppyy" ]; then
-        echo " Cloning cppyy"
+        echo "-----   Cloning cppyy   -----"
         git clone https://github.com/sudo-panda/cppyy.git
         git config --global --add safe.directory $1/cppyy
     fi
@@ -127,7 +129,7 @@ setup_cppyy() {
     cd cppyy
     python3 -m pip install . --upgrade --no-deps
 
-    echo " Done! cppyy installed"
+    echo "=====   Done! cppyy installed   ====="
 }
 
 pythonpath_add() {
@@ -137,7 +139,7 @@ pythonpath_add() {
 }
 
 update_script() {
-    echo "Updating $2 in $1 directory"
+    echo "=====   Updating $2 in $1 directory   ====="
     cd $1
     wget https://raw.githubusercontent.com/sudo-panda/scrawls/main/cppyy_setup.sh -O $2
 }
@@ -155,10 +157,11 @@ elif [[ $# -eq 1 ]]; then
     fi
 fi
 
-echo "Setting up cppyy in $INSTALL_DIR"
+echo "=====   Setting up cppyy in $INSTALL_DIR   ====="
 
 setup_venv "$INSTALL_DIR"
 
+source .venv/bin/activate
 mkdir $INSTALL_DIR/src
 
 setup_cppyy_backend "$INSTALL_DIR/src"
