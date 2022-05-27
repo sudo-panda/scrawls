@@ -11,7 +11,9 @@ setup_cppyy_backend() {
     echo "Setting up cppyy-backend in $1 directory"
     cd $1
     if [ ! -d "$1/cppyy-backend" ]; then
+        echo " Cloning cppyy-backend"
         git clone https://github.com/sudo-panda/cppyy-backend.git
+        git config --global --add safe.directory $1/cppyy-backend
     fi
 
     cd cppyy-backend
@@ -20,10 +22,7 @@ setup_cppyy_backend() {
 
     cd cling
     python3 setup.py egg_info
-
-    if [ ! -d "$1/cppyy-backend/cling/src" ]; then
-        python3 create_src_directory.py
-    fi
+    python3 create_src_directory.py
 
     if [ ! -L "$1/cppyy-backend/cling/src/core/metacling/src/clingwrapper" ]; then
         ln -s $1/cppyy-backend/clingwrapper/src $1/cppyy-backend/cling/src/core/metacling/src/clingwrapper
@@ -90,6 +89,7 @@ setup_cpycppyy() {
     if [ ! -d "$1/CPyCppyy" ]; then
         echo " Cloning CPyCppyy"
         git clone https://github.com/sudo-panda/CPyCppyy.git
+        git config --global --add safe.directory $1/CPyCppyy
     fi
 
     cd CPyCppyy
@@ -116,6 +116,7 @@ setup_cppyy() {
     if [ ! -d "$1/cppyy" ]; then
         echo " Cloning cppyy"
         git clone https://github.com/sudo-panda/cppyy.git
+        git config --global --add safe.directory $1/cppyy
     fi
 
     cd cppyy
@@ -141,17 +142,24 @@ update_script() {
     wget https://raw.githubusercontent.com/sudo-panda/scrawls/main/cppyy_setup.sh -O $2
 }
 
-if [ $# -eq 0 ]; then
-    INSTALL_DIR=${pwd}
-elif [[ $1 == "--update" ]]; then
+INSTALL_DIR="$( pwd )"
+
+if [[ $1 == "--update" ]]; then
     update_script "$( dirname -- "$0"; )" "$( basename -- "$0";)"
     exit
-else
-    echo "$1"
-    INSTALL_DIR=$1
+elif [[ $# -eq 1 ]]; then
+    INSTALL_DIR=$( readlink -f $1 )
+    if [[ ! -d $INSTALL_DIR ]]; then
+        echo "$INSTALL_DIR is not a valid path"
+        exit
+    fi
 fi
 
+echo "Setting up cppyy in $INSTALL_DIR"
+
 setup_venv "$INSTALL_DIR"
+
+mkdir $INSTALL_DIR/src
 
 setup_cppyy_backend "$INSTALL_DIR/src"
 pythonpath_add "$INSTALL_DIR/src/cppyy-backend/cling/python"
