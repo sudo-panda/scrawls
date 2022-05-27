@@ -136,16 +136,15 @@ pythonpath_add() {
 }
 
 update_script() {
-    echo "Updating cppyy_setup.sh in $1 directory"
+    echo "Updating $2 in $1 directory"
     cd $1
-    wget https://raw.githubusercontent.com/sudo-panda/scrawls/main/cppyy_setup.sh
+    wget https://raw.githubusercontent.com/sudo-panda/scrawls/main/cppyy_setup.sh -O $2
 }
 
 if [ $# -eq 0 ]; then
     INSTALL_DIR=${pwd}
 elif [[ $1 == "--update" ]]; then
-    echo "Updating ..."
-    update_script "$( dirname -- "$0"; )"
+    update_script "$( dirname -- "$0"; )" "$( basename -- "$0";)"
     exit
 else
     echo "$1"
