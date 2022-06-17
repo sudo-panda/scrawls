@@ -28,6 +28,10 @@ setup_cppyy_backend() {
         ln -s $1/cppyy-backend/clingwrapper/src $1/cppyy-backend/cling/src/core/metacling/src/clingwrapper
     fi
 
+    if [ ! -L "$1/cppyy-backend/cling/src/interpreter/cling/lib/Interpreter/clingwrapper" ]; then
+        ln -s $1/cppyy-backend/clingwrapper/src $1/cppyy-backend/cling/src/interpreter/cling/lib/Interpreter/clingwrapper
+    fi
+
     mkdir build
     cd build
 
@@ -38,6 +42,7 @@ setup_cppyy_backend() {
         -DLLVM_ENABLE_TERMINFO="0" \
         -Dbuiltin_cling="ON"       \
         -Dbuiltin_zlib="ON"        \
+        -Dclingtest="ON"           \
         -Dminimal="ON"             \
         -Druntime_cxxmodules="OFF" \
         ../src
